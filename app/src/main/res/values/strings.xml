@@ -1,5 +1,43 @@
 <resources>
+    <string-array name="animal_names_array">
+        <item>badger</item>
+        <item>bear</item>
+        <item>camel</item>
+        <item>cat</item>
+
+        <item>chicken</item>
+        <item>cow</item>
+        <item>crock</item>
+        <item>dog</item>
+        <item>dolphin</item>
+
+        <item>eagle</item>
+        <item>elephant</item>
+        <item>frog</item>
+        <item>giraffe</item>
+        <item>gorilla</item>
+
+        <item>horse</item>
+        <item>koala</item>
+        <item>lion</item>
+        <item>monkey</item>
+        <item>owl</item>
+
+        <item>penguin</item>
+        <item>pig</item>
+        <item>rabbit</item>
+        <item>rhino</item>
+        <item>seal</item>
+
+        <item>sheep</item>
+        <item>snake</item>
+        <item>squirrel</item>
+        <item>tiger</item>
+        <item>wolf</item>
+    </string-array>
+
     <string name="app_name">QuizApp</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_quiz">QuizActivity</string>
+
 </resources>
