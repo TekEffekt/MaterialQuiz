@@ -1,0 +1,14 @@
+
+
+
+
+<resources>
+    <string-array name="animal_names_array">
+
+        <item>test1</item>
+        <item>test2</item>
+        <item>test3</item>
+
+    </string-array>
+</resources>
+
