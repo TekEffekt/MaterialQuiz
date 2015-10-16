@@ -3,6 +3,7 @@ package com.example.kylez.quizapp;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Vibrator;
@@ -47,6 +48,9 @@ public class QuizActivity extends AppCompatActivity {
     QuizGame game;
     String currentAnimal;
     ArrayList<String> animalOptions = new ArrayList<>();
+    boolean soundQuestion;
+    MediaPlayer player;
+    int correctAnswerIndex;
 
     // INITIALIZATION:
 
@@ -101,6 +105,8 @@ public class QuizActivity extends AppCompatActivity {
             public void onFinish() {
                 countdownView.setProgress(0);
                 handleQuestionAnswer(false);
+
+
             }
         };
         timer.start();
@@ -123,24 +129,58 @@ public class QuizActivity extends AppCompatActivity {
 
         performSplash(v, answerCorrect);
 
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        handleQuestionAnswer(answerCorrect);
-                    }
-                });
-            }
-        };
+        if(!answerCorrect)
+        {
+            TimerTask task = new TimerTask() {
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            revealCorrectAnswer();
 
-        new Timer().schedule(task, 1000);
+                            TimerTask task = new TimerTask() {
+                                @Override
+                                public void run() {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            handleQuestionAnswer(answerCorrect);
+                                        }
+                                    });
+                                }
+                            };
+
+                            new Timer().schedule(task, 1000);
+                        }
+                    });
+                }
+            };
+
+            new Timer().schedule(task, 1000);
+        } else
+        {
+            TimerTask task = new TimerTask() {
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            handleQuestionAnswer(answerCorrect);
+                        }
+                    });
+                }
+            };
+            new Timer().schedule(task, 1000);
+        }
     }
 
     public void handleQuestionAnswer(Boolean wasCorrect)
     {
         timer.cancel();
+        if(player != null) {
+            player.stop();
+        }
         if(wasCorrect)
         {
             currentPoints += 10;
@@ -164,6 +204,14 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     // UI CANDY
+    public void revealCorrectAnswer()
+    {
+        View correctButton = ((View)buttons[correctAnswerIndex]).findViewWithTag("splash");
+        Log.d("Debug", correctAnswerIndex + "");
+
+        performSplash(correctButton, true);
+    }
+
     public void refresh()
     {
         ArrayList<String> questions = game.getRandomAnimalNames();
@@ -186,6 +234,7 @@ public class QuizActivity extends AppCompatActivity {
                 title = title.substring(0, 1).toUpperCase() + title.substring(1);
 
                 text.setText(title);
+                correctAnswerIndex = count;
             } else
             {
                 text.setText(capitalAnimalName);
@@ -196,9 +245,27 @@ public class QuizActivity extends AppCompatActivity {
         }
 
         setupCountdownTimer();
-
-        setupAnimalImage(game.getQuizItemTitle());
         currentAnimal = game.getQuizItemTitle();
+
+        soundQuestion = (new Random()).nextBoolean();
+
+        if(soundQuestion)
+        {
+            playSound();
+        } else
+        {
+            setupAnimalImage(game.getQuizItemTitle());
+        }
+    }
+
+    public void playSound()
+    {
+        int id = getResources().getIdentifier(game.getQuizItemTitle(), "raw", getPackageName());
+        player = MediaPlayer.create(getBaseContext(),id);
+
+        animalImage.setBackgroundResource(R.drawable.sound_effect);
+
+        player.start();
     }
 
     public void updatePointsView()

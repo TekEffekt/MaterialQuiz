@@ -59,6 +59,7 @@
             android:layout_margin="15dp"
             card_view:cardElevation="5dp"
             android:layout_marginTop="15dp"
+            card_view:cardPreventCornerOverlap="false"
             >
             <ImageView
                 android:layout_width="match_parent"
@@ -88,7 +89,9 @@
             grid:layout_gravity="fill_horizontal"
             android:gravity="center"
             android:layout_margin="15dp"
-            card_view:cardCornerRadius="4dp">
+            card_view:cardCornerRadius="2dp"
+            card_view:cardPreventCornerOverlap="false"
+            >
 
             <io.codetail.widget.RevealFrameLayout
                 android:layout_height="match_parent"
@@ -128,7 +131,8 @@
             android:gravity="center"
             android:layout_margin="15dp"
             card_view:cardElevation="2dp"
-            card_view:cardCornerRadius="4dp">
+            card_view:cardPreventCornerOverlap="false"
+            card_view:cardCornerRadius="2dp">
 
             <io.codetail.widget.RevealFrameLayout
                 android:layout_height="match_parent"
@@ -166,8 +170,9 @@
             grid:layout_gravity="fill_horizontal"
             android:gravity="center"
             android:layout_margin="15dp"
+            card_view:cardPreventCornerOverlap="false"
             card_view:cardElevation="2dp"
-            card_view:cardCornerRadius="4dp"
+            card_view:cardCornerRadius="2dp"
             >
 
             <io.codetail.widget.RevealFrameLayout
@@ -206,7 +211,8 @@
             grid:layout_gravity="fill_horizontal"
             android:gravity="center"
             android:layout_margin="15dp"
-            card_view:cardCornerRadius="4dp"
+            card_view:cardPreventCornerOverlap="false"
+            card_view:cardCornerRadius="2dp"
             card_view:cardElevation="2dp"
             >
 

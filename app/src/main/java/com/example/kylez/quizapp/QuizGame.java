@@ -26,6 +26,8 @@ public class QuizGame {
 
     public Context context;//in order to find our resources
 
+    private int lastKey;
+
     public int nOfRounds;
 
     public boolean gameOver = false;
@@ -70,7 +72,12 @@ public class QuizGame {
             quizItems.put(i, new QuizItem(items[i], items[i] + ".jpg", items[i] + ".mp3"));
             quizItemTitles.add(items[i]);
         }
-        currentQuizItem = quizItems.remove(randomness.nextInt(quizItems.size()));
+        lastKey = randomness.nextInt(quizItems.size());
+        currentQuizItem = quizItems.remove(lastKey);
+
+        if(currentQuizItem == null) {
+            Log.d("Debug", "Current quiz item is null 2");
+        }
     }
 
     /**
@@ -80,7 +87,22 @@ public class QuizGame {
     public boolean next() {
         Log.d("Debug", "Number of rounds left: " + nOfRounds);
         if (--nOfRounds > 0) {
-            currentQuizItem = quizItems.put(randomness.nextInt(quizItems.size()), currentQuizItem); //replace at a random index
+
+            Log.v("Debug", quizItems.toString());
+            quizItems.put(lastKey,currentQuizItem);
+            int randomIndex;
+            do {
+                 randomIndex = randomness.nextInt(quizItems.size());
+            }while(randomIndex == lastKey);
+
+            currentQuizItem = quizItems.remove(randomIndex); //replace at a random index
+            lastKey = randomIndex;
+            Log.v("Debug", quizItems.toString());
+            if(currentQuizItem == null)
+            {
+                Log.d("Debug", "Current quiz item is null");
+            }
+
             return true;
         } else {
             gameOver = true;
@@ -171,14 +193,22 @@ public class QuizGame {
     public ArrayList<String> getRandomAnimalNames() {
         final int size = 4;
         ArrayList<String> otherTitles = new ArrayList<>(size);
-        for (int i = 0, x = 0; i < size; i++) {
-            do {
-                x = randomness.nextInt(quizItemTitles.size());
+
+        if(currentQuizItem != null) {
+            Log.d("Debug", "Wht the fuck didn't just happened : " +  currentQuizItem + "   :   " + quizItems.toString());
+            Log.d("Debug", "Current Item's Titel: " + currentQuizItem.title);
+            for (int i = 0, x = 0; i < size; i++) {
+                do {
+                    x = randomness.nextInt(quizItemTitles.size());
+                }
+                while (otherTitles.contains(quizItemTitles.get(x))
+                        || quizItemTitles.get(x).equals(currentQuizItem.getTitle()));
+                otherTitles.add(quizItemTitles.get(x));
+                Log.d("Debug", " Current quiz item title: " + quizItemTitles.get(x));
             }
-            while (otherTitles.contains(quizItemTitles.get(x)) && !quizItemTitles.get(x).equals(currentQuizItem.getTitle()));
-            otherTitles.add(quizItemTitles.get(x));
-            Log.d("Debug", " Current quiz item title: " + quizItemTitles.get(x));
+        } else {
+            Log.d("Debug", "Wht the fuck just happened : " +  currentQuizItem + "   :   " + quizItems.toString());
         }
-        return otherTitles;
+            return otherTitles;
     }
 }
