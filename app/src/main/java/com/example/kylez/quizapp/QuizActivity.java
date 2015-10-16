@@ -2,6 +2,7 @@ package com.example.kylez.quizapp;
 
 import android.content.Context;
 import android.os.Bundle;
+<<<<<<< HEAD
 import android.os.CountDownTimer;
 import android.os.Vibrator;
 import android.support.design.widget.FloatingActionButton;
@@ -11,6 +12,9 @@ import android.support.v7.widget.Toolbar;
 import android.transition.Fade;
 import android.transition.Slide;
 import android.transition.TransitionInflater;
+=======
+import android.support.v7.app.AppCompatActivity;
+>>>>>>> origin/master
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
