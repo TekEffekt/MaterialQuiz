@@ -51,6 +51,46 @@ public class QuizActivity extends AppCompatActivity {
     boolean soundQuestion;
     MediaPlayer player;
     int correctAnswerIndex;
+    int remainingTime;
+    boolean pausedTimer;
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(timer != null)
+        {
+            timer.cancel();
+            pausedTimer = true;
+
+            if(player != null)
+            {
+                player.stop();
+            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(pausedTimer)
+        {
+            timer = new CountDownTimer(remainingTime, 50) {
+                @Override
+                public void onTick(long l) {
+                    countdownView.setProgress((int)l);
+                    remainingTime = (int)l;
+                }
+
+                @Override
+                public void onFinish() {
+                    countdownView.setProgress(0);
+                    handleQuestionAnswer(false);
+                }
+            };
+            timer.start();
+        }
+        pausedTimer = false;
+    }
 
     // INITIALIZATION:
 
@@ -99,14 +139,13 @@ public class QuizActivity extends AppCompatActivity {
             @Override
             public void onTick(long l){
                 countdownView.setProgress((int)l);
+                remainingTime = (int)l;
             }
 
             @Override
             public void onFinish() {
                 countdownView.setProgress(0);
                 handleQuestionAnswer(false);
-
-
             }
         };
         timer.start();
@@ -190,8 +229,7 @@ public class QuizActivity extends AppCompatActivity {
         game.next();
         if(game.isGameOver())
         {
-            Log.d("Debug","Game Over");
-            Toast.makeText(getBaseContext(), "Game Over!", Toast.LENGTH_LONG).show();
+            this.finish();
         } else
         {
             refresh();

@@ -1,5 +1,6 @@
 package com.example.kylez.quizapp;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -9,18 +10,24 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 
 public class MenuActivity extends AppCompatActivity {
+    Activity self;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        self = this;
 
-        Intent i = new Intent(this, QuizActivity.class);
-        startActivity(i);
+        ((Button)findViewById(R.id.newGameButton)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(self, QuizActivity.class);
+                startActivity(i);
+            }
+        });
     }
 
     @Override
