@@ -74,12 +74,15 @@ public class QuizGame {
 
     /**
      * this method takes our current quiz item, and swaps it with a random one at any index
+     * and will return whether or not the next question could be selected.
      */
     public boolean next() {
         if (0 != nOfRounds++) {
             currentQuizItem = quizItems.put(randomness.nextInt(quizItems.size()), currentQuizItem); //replace at a random index
+            return true;
         } else {
             gameOver = true;
+            return false;
         }
     }
 
