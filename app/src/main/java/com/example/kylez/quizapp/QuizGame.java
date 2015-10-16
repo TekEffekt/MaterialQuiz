@@ -3,6 +3,7 @@
 package com.example.kylez.quizapp;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,7 +63,7 @@ public class QuizGame {
     /**
      * populate our collections from the xml, and set a currentQuizItem
      */
-    public void populateFromXml() {
+    private void populateFromXml() {
         String[] items = context.getResources().getStringArray(collectionSource);//get titles
 
         for (int i = 0; i < items.length; i++) {
@@ -77,7 +78,8 @@ public class QuizGame {
      * and will return whether or not the next question could be selected.
      */
     public boolean next() {
-        if (0 != nOfRounds++) {
+        Log.d("Debug", "Number of rounds left: " + nOfRounds);
+        if (--nOfRounds > 0) {
             currentQuizItem = quizItems.put(randomness.nextInt(quizItems.size()), currentQuizItem); //replace at a random index
             return true;
         } else {
@@ -132,6 +134,8 @@ public class QuizGame {
      * @return current images file name
      */
     public String getQuizItemImageFileName() {
+
+        Log.d("debug", "Current image: " + currentQuizItem.getImageSource());
         return currentQuizItem.getImageSource();
     }
 
@@ -164,14 +168,16 @@ public class QuizGame {
      * determine 3 random item names, each unique to each other and different from the current item name
      * @return an array list of 3 unique but random item names
      */
-    public ArrayList<String> getRandomAnimalName() {
-        ArrayList<String> otherTitles = new ArrayList<>(3);
-        for (int i = 0, x = 0; i < otherTitles.size(); i++) {
+    public ArrayList<String> getRandomAnimalNames() {
+        final int size = 4;
+        ArrayList<String> otherTitles = new ArrayList<>(size);
+        for (int i = 0, x = 0; i < size; i++) {
             do {
                 x = randomness.nextInt(quizItemTitles.size());
             }
             while (otherTitles.contains(quizItemTitles.get(x)) && !quizItemTitles.get(x).equals(currentQuizItem.getTitle()));
             otherTitles.add(quizItemTitles.get(x));
+            Log.d("Debug", " Current quiz item title: " + quizItemTitles.get(x));
         }
         return otherTitles;
     }

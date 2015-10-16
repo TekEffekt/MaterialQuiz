@@ -1,8 +1,9 @@
 package com.example.kylez.quizapp;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-<<<<<<< HEAD
 import android.os.CountDownTimer;
 import android.os.Vibrator;
 import android.support.design.widget.FloatingActionButton;
@@ -12,20 +13,22 @@ import android.support.v7.widget.Toolbar;
 import android.transition.Fade;
 import android.transition.Slide;
 import android.transition.TransitionInflater;
-=======
 import android.support.v7.app.AppCompatActivity;
->>>>>>> origin/master
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.lzyzsd.circleprogress.DonutProgress;
 
 import org.w3c.dom.Text;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -41,6 +44,9 @@ public class QuizActivity extends AppCompatActivity {
     int currentPoints;
     ImageView animalImage;
     View[] buttons = new View[4];
+    QuizGame game;
+    String currentAnimal;
+    ArrayList<String> animalOptions = new ArrayList<>();
 
     // INITIALIZATION:
 
@@ -59,6 +65,17 @@ public class QuizActivity extends AppCompatActivity {
 
         setupCountdownView();
         setupCountdownTimer();
+
+        game = new QuizGame(R.array.animal_names_array,this.getBaseContext(), 10);
+
+        refresh();
+    }
+
+    public void setupAnimalImage(String fileName)
+    {
+        int id = getResources().getIdentifier(fileName, "drawable", getPackageName());
+
+        animalImage.setBackgroundResource(id);
     }
 
     public void setupCountdownView()
@@ -92,10 +109,12 @@ public class QuizActivity extends AppCompatActivity {
     // ACTION HANDLERS
     public void answerClicked(View v)
     {
-        int answerNumber = Integer.parseInt((String)((View)v.getParent()).getTag());
+        View parent = (View)v.getParent();
+        String chosenAnimal = ((String)((TextView)parent.findViewWithTag("answerText")).getText()).toLowerCase();
+        Log.d("Debug", chosenAnimal);
 
         // GAME MODEL NEEDED
-        final Boolean answerCorrect = false;
+        final Boolean answerCorrect = game.isCurrentTitle(chosenAnimal);
 
         if(!answerCorrect)
         {
@@ -121,36 +140,67 @@ public class QuizActivity extends AppCompatActivity {
 
     public void handleQuestionAnswer(Boolean wasCorrect)
     {
+        timer.cancel();
         if(wasCorrect)
         {
             currentPoints += 10;
             updatePointsView();
         }
 
-        refresh();
+        game.next();
+        if(game.isGameOver())
+        {
+            Log.d("Debug","Game Over");
+            Toast.makeText(getBaseContext(), "Game Over!", Toast.LENGTH_LONG).show();
+        } else
+        {
+            refresh();
+        }
     }
 
+    public int getButtonRandomIndex()
+    {
+        return (new Random()).nextInt(4);
+    }
+
+    // UI CANDY
     public void refresh()
     {
+        ArrayList<String> questions = game.getRandomAnimalNames();
+        int index = getButtonRandomIndex();
+        int count = 0;
         for(View button:buttons)
         {
             TextView text = (TextView)button.findViewWithTag("answerText");
             View splash = button.findViewWithTag("splash");
+            text.setTextColor(Color.BLACK);
 
             splash.setAlpha(0);
-            text.setText("");
+
+            String capitalAnimalName = questions.get(questions.size() - 1);
+            capitalAnimalName = capitalAnimalName.substring(0, 1).toUpperCase() + capitalAnimalName.substring(1);
+
+            if(index == count)
+            {
+                String title = game.getQuizItemTitle();
+                title = title.substring(0, 1).toUpperCase() + title.substring(1);
+
+                text.setText(title);
+            } else
+            {
+                text.setText(capitalAnimalName);
+                questions.remove(questions.size() - 1);
+            }
+
+            count++;
         }
 
         setupCountdownTimer();
+
+        setupAnimalImage(game.getQuizItemTitle());
+        currentAnimal = game.getQuizItemTitle();
     }
 
-    public void shakePhone()
-    {
-        Vibrator v = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
-        v.vibrate(300);
-    }
-
-    // UI CANDY
     public void updatePointsView()
     {
         pointsView.setText(currentPoints + " points");
@@ -159,6 +209,9 @@ public class QuizActivity extends AppCompatActivity {
     public void performSplash(View answerButton, Boolean correct)
     {
         styleAnswerButtonForCorrectness(answerButton, correct);
+
+        TextView text = (TextView)((View)answerButton.getParent()).findViewWithTag("answerText");
+        text.setTextColor(Color.WHITE);
 
         int cx = (answerButton.getLeft() + answerButton.getRight()) / 2;
         int cy = (answerButton.getTop() + answerButton.getBottom()) / 2;
@@ -191,4 +244,10 @@ public class QuizActivity extends AppCompatActivity {
         button.setAlpha(1);
     }
 
+    // OTHER
+    public void shakePhone()
+    {
+        Vibrator v = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
+        v.vibrate(300);
+    }
 }
