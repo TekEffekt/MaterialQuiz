@@ -9,6 +9,8 @@ public class QuizItem
     public String title;
     public String  imageSource = null;
     public String soundSource = null;
+    public Boolean answered = false;
+    public int quizItemState = 0;
 
     /**
      * default constructor used maybe for testing purposes, without an image or sound source
@@ -49,6 +51,22 @@ public class QuizItem
     }
 
     /**
+     * determines whether or not the passed in string matches this items title AND sets the item state
+     * @param titleToCheck string that may or may not be the title
+     * @return whether or not we found a match of title and the passed in string
+     */
+    public  boolean checkCorrect (String titleToCheck){
+        if (isCorrect(titleToCheck)){
+            quizItemState = 1;
+        } else {
+            quizItemState = -1;
+        }
+        return isCorrect(titleToCheck);
+
+    }
+
+
+    /**
      * getter for image files source
      * @return imageSource
      */
@@ -72,8 +90,9 @@ public class QuizItem
         return title;
     }
 
-    public static void main(String[] args)
-    {
 
+
+    public int getState(){
+        return quizItemState;
     }
 }
