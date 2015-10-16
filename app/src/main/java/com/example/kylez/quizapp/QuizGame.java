@@ -12,6 +12,7 @@ import java.util.Random;
  * Created by Quinn on 10/15/15.
  */
 public class QuizGame {
+
     private int collectionSource;//the source Id for where our quiz titles are
 
     private Random randomness = new Random();//a handy dandy random goes a long way
@@ -24,6 +25,25 @@ public class QuizGame {
 
     public Context context;//in order to find our resources
 
+    public int nOfRounds;
+
+    public boolean gameOver = false;
+
+
+    /**
+     * create and init a quiz game
+     * @param newCollectionSource //the id of the resource containing titles
+     * @param context //so we can access our resources
+     * @param numberOfRounds //constructor defining an explicit number of rounds
+     */
+    public QuizGame(int newCollectionSource, Context context, int numberOfRounds) {
+        this.nOfRounds = numberOfRounds;
+        collectionSource = newCollectionSource;
+        quizItemTitles = new ArrayList<>();
+        quizItems = new HashMap<>();
+        this.context = context;
+        populateFromXml();//populate our fields.
+    }
 
     /**
      * create and init a quiz game
@@ -31,6 +51,7 @@ public class QuizGame {
      * @param  //so we can access our resources
      */
     public QuizGame(int newCollectionSource, Context context) {
+        this.nOfRounds = 5;
         collectionSource = newCollectionSource;
         quizItemTitles = new ArrayList<>();
         quizItems = new HashMap<>();
@@ -54,8 +75,20 @@ public class QuizGame {
     /**
      * this method takes our current quiz item, and swaps it with a random one at any index
      */
-    public void next() {
-        currentQuizItem = quizItems.put(randomness.nextInt(quizItems.size()), currentQuizItem); //replace at a random index
+    public boolean next() {
+        if (0 != nOfRounds++) {
+            currentQuizItem = quizItems.put(randomness.nextInt(quizItems.size()), currentQuizItem); //replace at a random index
+        } else {
+            gameOver = true;
+        }
+    }
+
+    /**
+     * Game state assesment utility, to check if the game has ended
+     * @return boolean whether or not game is over
+     */
+    public boolean isGameOver(){
+        return gameOver;
     }
 
     /**
@@ -81,6 +114,14 @@ public class QuizGame {
      */
     public String getQuizItemSoundFileName() {
         return currentQuizItem.getSoundSource();
+    }
+
+    /**
+     * this allows the game to know whether or not the current question was answered
+     * @return whether or not the currentQuizItem was answered
+     */
+    public boolean wasAnswered(){
+        return !(currentQuizItem.getState() == 0);
     }
 
     /**
